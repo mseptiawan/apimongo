@@ -8,7 +8,6 @@ const createTodo = (req, res) => {
         dueDate: req.body.dueDate,
         user: req.body.user,
         category: req.body.category,
-        createdAt: req.body.createdAt,
     });
 
 
@@ -16,7 +15,7 @@ const createTodo = (req, res) => {
     todo.save().then((createdTodo) => {
         res.status(201).json({
             message: "Data berhasil disimpan",
-            bookId: createdTodo._id
+            todoId: createdTodo._id
         });
     }).catch((err) => {
         //console.log(err);
@@ -33,7 +32,7 @@ const readTodo = (req, res) => {
         .then((documents) => {
             res.status(201).json({
                 message: "Get Data Todo",
-                bukus: documents
+                todos: documents
             });
         }).catch((err) => {
             //console.log(err);
