@@ -1,6 +1,7 @@
 const Todo = require("../model/todos");
 
 const createTodo = (req, res) => {
+
   const todo = new Todo({
     title: req.body.title,
     description: req.body.description,

@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
+
 const Category = require('./categories'); // Pastikan path file sesuai dengan lokasi model Category
 const User = require('./users'); // Pastikan path file sesuai dengan lokasi model User
+
 
 const todoSchema = new mongoose.Schema({
     title: {
