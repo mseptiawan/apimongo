@@ -1,7 +1,6 @@
 const Todo = require("../model/todos");
 
 const createTodo = (req, res) => {
-
   const todo = new Todo({
     title: req.body.title,
     description: req.body.description,
@@ -30,6 +29,7 @@ const createTodo = (req, res) => {
 };
 
 const readTodo = async (req, res) => {
+  res.set("Cache-Control", "no-store");
   try {
     const todos = await Todo.find()
       .populate("user", "username email") // Populate data user, hanya ambil name dan email
