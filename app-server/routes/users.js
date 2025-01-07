@@ -1,13 +1,13 @@
-var express = require('express');
+// routes/users.js
+var express = require("express");
 var router = express.Router();
-
-/* GET users listing. */
-// router.get('/', function(req, res, next) {
-//   res.send('respond with a resource');
-// });
 
 const UserController = require("../controller/user");
 
-router.post('/', UserController.signUp);
+// Route untuk sign up (registrasi)
+router.post("/signup", UserController.signUp);
+
+// Route untuk login
+router.post("/login", UserController.login);
 
 module.exports = router;
