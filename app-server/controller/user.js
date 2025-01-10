@@ -1,12 +1,11 @@
 // controllers/user.js
 const User = require("../model/users");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
 // Sign Up Controller
 const signUp = (req, res) => {
   const { username, email, password } = req.body;
-  // Meng-hash password yang diterima dari client
+
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
@@ -38,10 +37,11 @@ const signUp = (req, res) => {
     });
 };
 
-// Login Controller
+// Login Controller tanpa token
 const login = (req, res) => {
   let fetchedUser;
 
+  // Cari user berdasarkan email
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
@@ -51,7 +51,8 @@ const login = (req, res) => {
       }
 
       fetchedUser = user;
-      return bcrypt.compare(req.body.password, user.password); // Bandingkan password yang dimasukkan dengan password yang sudah di-hash
+      // Bandingkan password yang dimasukkan dengan password yang sudah di-hash
+      return bcrypt.compare(req.body.password, user.password);
     })
     .then((result) => {
       if (!result) {
@@ -60,17 +61,14 @@ const login = (req, res) => {
         });
       }
 
-      // Jika password benar, buat token JWT
-      const token = jwt.sign(
-        { email: fetchedUser.email, userid: fetchedUser._id },
-        "gwsca", // Secret key (sebaiknya simpan di environment variables)
-        { expiresIn: "1h" }
-      );
-
-      return res.status(200).json({ token: token });
+      // Hanya kirimkan userId ke frontend tanpa JWT
+      return res.status(200).json({
+        message: "Login successful",
+        userId: fetchedUser._id, // Kirimkan userId di sini
+      });
     })
     .catch((err) => {
-      return res.status(401).json({
+      return res.status(500).json({
         message: "Auth failed!",
         error: err,
       });
