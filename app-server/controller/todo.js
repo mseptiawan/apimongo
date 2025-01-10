@@ -1,94 +1,61 @@
 const Todo = require("../model/todos");
+exports.getTodosByUser = (req, res) => {
+  const userId = req.query.userId; // Pastikan ini diambil dari token yang telah diverifikasi
 
-const createTodo = (req, res) => {
-  const todo = new Todo({
-    title: req.body.title,
-    description: req.body.description,
-    completed: req.body.completed,
-    dueDate: req.body.dueDate,
-    user: req.body.user,
-    category: req.body.category,
-  });
-
-  console.log(todo);
-  todo
-    .save()
-    .then((createdTodo) => {
-      res.status(201).json({
-        message: "Data berhasil disimpan",
-        todoId: createdTodo._id,
-      });
-    })
-    .catch((err) => {
-      //console.log(err);
-      res.status(500).json({
-        message: "internal server error !",
-        //error : err
-      });
-    });
-};
-
-const readTodo = async (req, res) => {
-  res.set("Cache-Control", "no-store");
-  try {
-    const todos = await Todo.find()
-      .populate("user", "username email") // Populate data user, hanya ambil name dan email
-      .populate("category", "name"); // Populate data category, hanya ambil name
-
-    res.status(200).json({
-      message: "Get Data Todo",
-      todos: todos,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Internal Server Error",
-      error: error.message, // Menyertakan pesan error untuk debugging
+  if (!userId) {
+    return res.status(400).json({
+      message: "User ID is required",
     });
   }
-};
 
-const deleteTodo = (req, res) => {
-  Todo.deleteOne({ _id: req.params.id })
-    .then((result) => {
-      res.status(200).json({
-        message: "Todo berhasil dihapus ",
-        result: result,
-      });
+  Todo.find({ user: userId })
+    .then((todos) => {
+      console.log(todos);
+      res.json({ message: "Todos retrieved successfully", todos });
     })
     .catch((err) => {
-      //console.log(err);
-      res.status(500).json({
-        message: "internal server error !",
-        //error : err
-      });
+      res.status(500).json({ message: "Error retrieving todos", error: err });
     });
 };
+exports.createTodo = (req, res) => {
+  const { title, description, dueDate, category, completed } = req.body;
 
-const updateTodo = (req, res) => {
-  const todo = new Todo({
-    _id: req.params.id,
-    title: req.body.title,
-    description: req.body.description,
-    completed: req.body.completed,
-    dueDate: req.body.dueDate,
-    user: req.body.user,
-    category: req.body.category,
-    createdAt: req.body.createdAt,
+  const newTodo = new Todo({
+    title,
+    description,
+    dueDate,
+    category,
+    completed: completed || false,
+    user: req.userId, // Mengambil userId dari token
   });
 
-  Todo.updateOne({ _id: req.params.id }, todo)
-    .then((hasil) => {
-      res.status(200).json({
-        message: "Update Berhasil",
-        result: hasil,
-      });
-    })
-    .catch((err) => {
-      //console.log(err);
-      res.status(500).json({
-        message: "internal server error !",
-        //error : err
-      });
-    });
+  newTodo
+    .save()
+    .then((todo) => res.status(201).json(todo))
+    .catch((err) =>
+      res.status(400).json({ message: "Error creating todo", error: err })
+    );
 };
-module.exports = { createTodo, readTodo, deleteTodo, updateTodo };
+
+// Delete Todo
+exports.deleteTodo = (req, res) => {
+  const { id } = req.params;
+
+  Todo.findByIdAndDelete(id)
+    .then(() => res.json({ message: "Todo deleted successfully" }))
+    .catch((err) =>
+      res.status(400).json({ message: "Error deleting todo", error: err })
+    );
+};
+
+// Update Todo
+exports.updateTodo = (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  Todo.findByIdAndUpdate(id, updates, { new: true })
+    .then((todo) => res.json(todo))
+    .catch((err) =>
+      res.status(400).json({ message: "Error updating todo", error: err })
+    );
+};

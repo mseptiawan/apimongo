@@ -1,28 +1,17 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-
-const TodoController = require("../controller/todo")
-/* GET users listing. */
-// router.get('/', function(req, res, next) {
-//   res.send('respond dari BUKU router');
-// });
-
+const TodoController = require("../controller/todo");
 
 //insert
-router.post('/', TodoController.createTodo);
+router.post("/", TodoController.createTodo);
 
-
-//select
-router.get("/", TodoController.readTodo);
-
+router.get("/", TodoController.getTodosByUser);
 
 //delete
-router.delete('/:id', TodoController.deleteTodo);
-
+router.delete("/:id", TodoController.deleteTodo);
 
 //update
-router.put('/:id', TodoController.updateTodo);
-
+router.put("/:id", TodoController.updateTodo);
 
 module.exports = router;
