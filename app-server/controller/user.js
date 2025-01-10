@@ -65,6 +65,7 @@ const login = (req, res) => {
       return res.status(200).json({
         message: "Login successful",
         userId: fetchedUser._id, // Kirimkan userId di sini
+        username: fetchedUser.username,
       });
     })
     .catch((err) => {

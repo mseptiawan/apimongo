@@ -1,4 +1,5 @@
 const Todo = require("../model/todos");
+
 exports.getTodosByUser = (req, res) => {
   const userId = req.query.userId; // Pastikan ini diambil dari token yang telah diverifikasi
 
@@ -15,7 +16,10 @@ exports.getTodosByUser = (req, res) => {
     })
     .catch((err) => {
       res.status(500).json({ message: "Error retrieving todos", error: err });
-const createTodo = (req, res) => {
+    });
+};
+
+exports.createTodo = (req, res) => {
   const todo = new Todo({
     title: req.body.title,
     description: req.body.description,
@@ -38,6 +42,12 @@ const createTodo = (req, res) => {
       res.status(500).json({
         message: "Internal server error!",
       });
+    });
+};
+
+exports.createNewTodo = (req, res) => {
+  const { title, description, dueDate, category, completed } = req.body;
+
   const newTodo = new Todo({
     title,
     description,
@@ -53,7 +63,6 @@ const createTodo = (req, res) => {
     .catch((err) =>
       res.status(400).json({ message: "Error creating todo", error: err })
     );
-
 };
 
 // Delete Todo
@@ -67,7 +76,6 @@ exports.deleteTodo = (req, res) => {
     );
 };
 
-
 // Update Todo
 exports.updateTodo = (req, res) => {
   const { id } = req.params;
@@ -79,4 +87,3 @@ exports.updateTodo = (req, res) => {
       res.status(400).json({ message: "Error updating todo", error: err })
     );
 };
-
