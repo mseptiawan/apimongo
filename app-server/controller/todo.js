@@ -25,7 +25,7 @@ exports.getTodosByUser = (req, res) => {
 
 // Create a new Todo
 exports.createTodo = (req, res) => {
-  const { title, description, dueDate, completed, category } = req.body;
+  const { title, description, dueDate, category } = req.body;
   const userId = req.userId; // Menyimpan userId yang dikirim dari middleware auth atau user service
 
   // Pastikan userId ada, jika tidak ada akan memberi response error
@@ -41,7 +41,6 @@ exports.createTodo = (req, res) => {
     description,
     dueDate,
     category,
-    completed: completed || false, // Default to false if not provided
     user: userId, // Menyimpan userId yang dikirim dari frontend
   });
 
