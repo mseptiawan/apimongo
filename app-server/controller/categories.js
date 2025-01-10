@@ -1,6 +1,5 @@
 const Category = require("../model/categories");
 
-// Create category
 const createCategory = (req, res) => {
   const category = new Category({
     name: req.body.name,
@@ -22,7 +21,6 @@ const createCategory = (req, res) => {
     });
 };
 
-// Get all categories
 const getCategories = (req, res) => {
   Category.find()
     .then((categories) => {
@@ -39,7 +37,6 @@ const getCategories = (req, res) => {
     });
 };
 
-// Get category by ID (optional, if needed)
 const getCategoryById = (req, res) => {
   const categoryId = req.params.id;
 
@@ -62,7 +59,6 @@ const getCategoryById = (req, res) => {
     });
 };
 
-// Update category by ID
 const updateCategory = (req, res) => {
   const categoryId = req.params.id;
   const updatedData = {
@@ -89,7 +85,6 @@ const updateCategory = (req, res) => {
     });
 };
 
-// Delete category by ID
 const deleteCategory = (req, res) => {
   const categoryId = req.params.id;
 

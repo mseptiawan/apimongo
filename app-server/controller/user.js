@@ -1,8 +1,6 @@
-// controllers/user.js
 const User = require("../model/users");
 const bcrypt = require("bcrypt");
 
-// Sign Up Controller
 const signUp = (req, res) => {
   const { username, email, password } = req.body;
 
@@ -12,7 +10,7 @@ const signUp = (req, res) => {
       const user = new User({
         username: req.body.username,
         email: req.body.email,
-        password: hash, // Simpan password yang sudah di-hash
+        password: hash, 
       });
 
       user
@@ -37,11 +35,9 @@ const signUp = (req, res) => {
     });
 };
 
-// Login Controller tanpa token
 const login = (req, res) => {
   let fetchedUser;
 
-  // Cari user berdasarkan email
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
@@ -51,7 +47,7 @@ const login = (req, res) => {
       }
 
       fetchedUser = user;
-      // Bandingkan password yang dimasukkan dengan password yang sudah di-hash
+      
       return bcrypt.compare(req.body.password, user.password);
     })
     .then((result) => {
@@ -61,10 +57,9 @@ const login = (req, res) => {
         });
       }
 
-      // Hanya kirimkan userId ke frontend tanpa JWT
       return res.status(200).json({
         message: "Login successful",
-        userId: fetchedUser._id, // Kirimkan userId di sini
+        userId: fetchedUser._id, 
         username: fetchedUser.username,
       });
     })

@@ -1,7 +1,7 @@
 const Todo = require("../model/todos");
 
 exports.getTodosByUser = (req, res) => {
-  const userId = req.query.userId; // Pastikan ini diambil dari token yang telah diverifikasi
+  const userId = req.query.userId; 
 
   if (!userId) {
     return res.status(400).json({
@@ -25,11 +25,11 @@ exports.createTodo = (req, res) => {
     description: req.body.description,
     completed: req.body.completed,
     dueDate: req.body.dueDate,
-    user: req.body.user, // Menyimpan userId yang dikirim dari frontend
+    user: req.body.user,
     category: req.body.category,
   });
 
-  console.log(todo); // Menampilkan todo untuk debugging
+  console.log(todo);
   todo
     .save()
     .then((createdTodo) => {
@@ -54,7 +54,7 @@ exports.createNewTodo = (req, res) => {
     dueDate,
     category,
     completed: completed || false,
-    user: req.userId, // Mengambil userId dari token
+    user: req.userId,
   });
 
   newTodo
@@ -65,7 +65,6 @@ exports.createNewTodo = (req, res) => {
     );
 };
 
-// Delete Todo
 exports.deleteTodo = (req, res) => {
   const { id } = req.params;
 
@@ -76,7 +75,6 @@ exports.deleteTodo = (req, res) => {
     );
 };
 
-// Update Todo
 exports.updateTodo = (req, res) => {
   const { id } = req.params;
   const updates = req.body;
