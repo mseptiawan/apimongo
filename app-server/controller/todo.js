@@ -1,9 +1,7 @@
 const Todo = require("../model/todos");
 
-
-// Get todos by userId
 exports.getTodosByUser = (req, res) => {
-  const userId = req.query.userId; // Pastikan userId diambil dari token atau query string
+  const userId = req.query.userId; // Pastikan ini diambil dari token yang telah diverifikasi
 
   if (!userId) {
     return res.status(400).json({
@@ -13,7 +11,7 @@ exports.getTodosByUser = (req, res) => {
 
   Todo.find({ user: userId })
     .then((todos) => {
-      console.log(todos); // Debugging to check the todos
+      console.log(todos);
       res.json({ message: "Todos retrieved successfully", todos });
     })
     .catch((err) => {
@@ -41,101 +39,51 @@ exports.createTodo = (req, res) => {
       });
     })
     .catch((err) => {
-
       res.status(500).json({
-        message: "Error retrieving todos",
-        error: err,
+        message: "Internal server error!",
       });
     });
 };
 
-
 exports.createNewTodo = (req, res) => {
   const { title, description, dueDate, category, completed } = req.body;
 
-// Create a new Todo
-exports.createTodo = (req, res) => {
-  const { title, description, dueDate, category } = req.body;
-  const userId = req.userId; // Menyimpan userId yang dikirim dari middleware auth atau user service
-
-  // Pastikan userId ada, jika tidak ada akan memberi response error
-  if (!userId) {
-    return res.status(400).json({
-      message: "User ID is required",
-    });
-  }
-
-  // Membuat Todo baru
   const newTodo = new Todo({
     title,
     description,
     dueDate,
     category,
-    user: userId, // Menyimpan userId yang dikirim dari frontend
+    completed: completed || false,
+    user: req.userId, // Mengambil userId dari token
   });
 
-  // Menyimpan Todo ke database
   newTodo
     .save()
     .then((todo) => res.status(201).json(todo))
     .catch((err) =>
       res.status(400).json({ message: "Error creating todo", error: err })
-    )
-    .then((createdTodo) => {
-      res.status(201).json({
-        message: "Todo created successfully",
-        todoId: createdTodo._id,
-        todo: createdTodo,
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({
-        message: "Error creating todo",
-        error: err,
-      });
-    });
+    );
 };
 
-// Delete Todo by ID
+// Delete Todo
 exports.deleteTodo = (req, res) => {
   const { id } = req.params;
 
   Todo.findByIdAndDelete(id)
-    .then(() => {
-      res.json({ message: "Todo deleted successfully" });
-    })
-    .catch((err) => {
-      res.status(400).json({
-        message: "Error deleting todo",
-        error: err,
-      });
-    });
+    .then(() => res.json({ message: "Todo deleted successfully" }))
+    .catch((err) =>
+      res.status(400).json({ message: "Error deleting todo", error: err })
+    );
 };
 
-
-// Update Todo by ID
-
+// Update Todo
 exports.updateTodo = (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
   Todo.findByIdAndUpdate(id, updates, { new: true })
-    .then((updatedTodo) => {
-      if (!updatedTodo) {
-        return res.status(404).json({
-          message: "Todo not found",
-        });
-      }
-      res.json({
-        message: "Todo updated successfully",
-        todo: updatedTodo,
-      });
-    })
-    .catch((err) => {
-      res.status(400).json({
-        message: "Error updating todo",
-        error: err,
-      });
-    });
-  }
-}
+    .then((todo) => res.json(todo))
+    .catch((err) =>
+      res.status(400).json({ message: "Error updating todo", error: err })
+    );
+};
