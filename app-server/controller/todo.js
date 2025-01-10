@@ -15,11 +15,29 @@ exports.getTodosByUser = (req, res) => {
     })
     .catch((err) => {
       res.status(500).json({ message: "Error retrieving todos", error: err });
-    });
-};
-exports.createTodo = (req, res) => {
-  const { title, description, dueDate, category, completed } = req.body;
+const createTodo = (req, res) => {
+  const todo = new Todo({
+    title: req.body.title,
+    description: req.body.description,
+    completed: req.body.completed,
+    dueDate: req.body.dueDate,
+    user: req.body.user, // Menyimpan userId yang dikirim dari frontend
+    category: req.body.category,
+  });
 
+  console.log(todo); // Menampilkan todo untuk debugging
+  todo
+    .save()
+    .then((createdTodo) => {
+      res.status(201).json({
+        message: "Data berhasil disimpan",
+        todoId: createdTodo._id,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Internal server error!",
+      });
   const newTodo = new Todo({
     title,
     description,
@@ -35,6 +53,7 @@ exports.createTodo = (req, res) => {
     .catch((err) =>
       res.status(400).json({ message: "Error creating todo", error: err })
     );
+
 };
 
 // Delete Todo
@@ -48,6 +67,7 @@ exports.deleteTodo = (req, res) => {
     );
 };
 
+
 // Update Todo
 exports.updateTodo = (req, res) => {
   const { id } = req.params;
@@ -59,3 +79,4 @@ exports.updateTodo = (req, res) => {
       res.status(400).json({ message: "Error updating todo", error: err })
     );
 };
+
